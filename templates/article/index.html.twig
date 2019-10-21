@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ArticlesController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>List of Articles</h2>
+        <a href="{{ path('create_article') }}">Create Article</a>
+        {% for article in articles %}
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div>Title: {{ article.title }}</div>
+                    <br>
+                    <div>Author: {{ article.author }}</div>
+                    <br>
+                    <div>Content: <br> {{ article.content }}</div>
+                    <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">Watch</a></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
