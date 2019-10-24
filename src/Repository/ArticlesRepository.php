@@ -19,6 +19,18 @@ class ArticlesRepository extends ServiceEntityRepository
         parent::__construct($registry, Articles::class);
     }
 
+    public function findArticleWithComments($articleId): ?Articles
+    {
+        return $this->createQueryBuilder('a')
+            ->addSelect('c')
+            ->innerJoin('a.comments', 'c')
+            ->andWhere('a.id = :articleId')
+            ->setParameter('articleId', $articleId)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     // /**
     //  * @return Articles[] Returns an array of Articles objects
     //  */

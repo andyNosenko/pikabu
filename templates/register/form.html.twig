@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Registration Form</h2>
+        <div class="card bg-warning text-white">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                {{ form_start(form) }}
+                <div class="form-group">
+                    <label for="input">{{ form_label(form.email) }}</label><br>
+                    {{ form_widget(form.email) }}
+                </div>
+                <div class="form-group">
+                    <label for="input">{{ form_label(form.password) }}</label><br>
+                    {{ form_widget(form.password) }}
+                </div>
+                <div class="form-group">
+                    <label for="input">{{ form_label(form.firstName) }}</label><br>
+                    {{ form_widget(form.firstName) }}
+                </div>
+                <div class="form-group">
+                    <label for="input">{{ form_label(form.lastName) }}</label><br>
+                    {{ form_widget(form.lastName) }}
+                </div>
+                <div class="form-group">
+                    <label for="input">{{ form_label(form.isBlogger) }}</label><br>
+                    {{ form_widget(form.isBlogger) }}
+                </div>
+                {{ form_widget(form.submit) }}
+{#                <button type="submit">Save</button>#}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

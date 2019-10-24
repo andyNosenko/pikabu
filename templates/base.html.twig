@@ -8,6 +8,26 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
+
+<a href="{{ path('articles') }}">All Posts</a>
+<a href="#">Popular</a>
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <a href="#">Preferences(Not for guests)</a>
+    <a href="{{ path('profile') }}">My profile(Only for authorized)</a>
+    <a href="{{ path('logout') }}">Logout(Only for authorized)</a>
+{% endif %}
+{% if is_granted('ROLE_BLOGGER') or is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
+    <a href="{{ path('my_articles') }}">My Posts(Only for bloggers)</a>
+    <a href="{{ path('create_article') }}">Create New Post(Only for bloggers)</a>
+{% endif %}
+{% if not is_granted('IS_AUTHENTICATED_FULLY')%}
+    <a href="{{ path('login') }}">Login(Only for guests)</a>
+    <a href="{{ path('register') }}">Register(Only for guests)</a>
+{% endif %}
+{% if is_granted('IS_ADMIN') %}
+    <a href="#">Administration(Only for admin)</a>
+{% endif %}
+
 {% block body %}{% endblock %}
 {% block javascripts %}{% endblock %}
 </body>

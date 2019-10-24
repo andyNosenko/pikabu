@@ -73,4 +73,34 @@ class CommentController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('single_article', ['article' => $article->getId()]);
     }
+
+    /**
+     * @Route("/comments/reply/{article}/{comment}", name="comment_reply")
+     */
+    public function reply(Request $request, Articles $article, Comments $comment)
+    {
+        $subComment = new Comments();
+        $form = $this->createForm(CommentType::class, $subComment, [
+            'action' => $this->generateUrl('comment_reply', [
+                'article' => $article->getId(),
+                'comment' => $comment->getId(),
+            ]),
+            'method' => 'POST',
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $subComment = $form->getData();
+            $subComment->setCreatedAt(new \DateTime('now'));
+           // $subComment->setArticle($article);
+            $subComment->setParent($comment);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($subComment);
+            $em->flush();
+            return $this->redirectToRoute('single_article', ['article' => $article->getId()]);
+        }
+        return $this->render('comment/form.html.twig', [
+            'form' => $form->createView(),
+            'article' => $article
+        ]);
+    }
 }

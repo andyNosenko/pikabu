@@ -2,7 +2,12 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * @ORM\Entity
@@ -42,9 +47,42 @@ class Comments
      */
     private $article;
 
+    /**
+     * One Comment has Many Comments.
+     * @OneToMany(targetEntity="Comments", mappedBy="parent")
+     */
+    private $children;
+
+    /**
+     * Many Comments have One comment.
+     * @ManyToOne(targetEntity="Comments", inversedBy="children")
+     * @JoinColumn(name="parent_id", referencedColumnName="id")
+     */
+    private $parent;
+
+    public function _construct() {
+        $this->children = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection|null
+     */
+    public function getChildren(): ?Collection
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param Comments $comment
+     */
+    public function setParent(Comments $comment): void
+    {
+        $this->parent = $comment;
     }
 
     public function getAuthor(): ?string

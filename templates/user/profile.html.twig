@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+{% block body %}
+    <div class="container">
+        <h2>Hi, {{ user.firstName }}</h2>
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div>Id: {{ user.id }}</div>
+                    <br>
+                    <div>Login: {{ user.email }}</div>
+                    <br>
+                    <div>First Name: {{ user.firstName }}</div>
+                    <br>
+                    <div>Last Name: {{ user.lastName }}</div>
+                    <br>
+                   <div class="text-white bg-white"><a href="{{ path('update_profile') }}">Edit</a></div>
+                </div>
+            </div>
+    </div>
+{% endblock %}
