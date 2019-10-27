@@ -185,7 +185,6 @@ class ArticleController extends AbstractController
             $em->flush();
         }
 
-
         return $this->render('article/single.html.twig', [
             'article' => $article,
         ]);
