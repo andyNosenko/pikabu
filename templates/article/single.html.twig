@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% import 'comment/sub_comment.html.twig' as subComment %}
 {% block title %}Hello ArticlesController!{% endblock %}
 {% block body %}
     <div class="container">
@@ -30,34 +30,23 @@
                     <div class="text-white bg-white"><a href="{{ path('comment_reply', {'article': article.id, 'comment': comment.id }) }}">Reply</a></div>
                 </div>
             </div>
-            {% for subComment in comment.children %}
-                <div class="card bg-info text-black" style="margin-left: 20px">
-                    <div class="card-body">
-                        <div>SubCommentAuthor: {{ subComment.author }}</div>
-                        <br>
-                        <div>SubCommentAuthor: {{ subComment.createdAt|date("F jS \\a\\t g:ia") }}</div>
-                        <br>
-                        <div>SubCommentContent: <br> {{ subComment.content }}</div>
-                        <div class="text-white bg-white"><a href="{{ path('comment_update_form', {'article': article.id, 'comment': subComment.id }) }}">Edit</a></div>
-                        <div class="text-white bg-white"><a href="{{ path('comment_delete', {'article': article.id, 'comment': subComment.id }) }}">Delete</a></div>
-                        <div class="text-white bg-white"><a href="{{ path('comment_reply', {'article': article.id, 'comment': subComment.id }) }}">Reply</a></div>
-                    </div>
-                </div>
-                {% for subSubComment in subComment.children %}
-                    <div class="card bg-warning text-black" style="margin-left: 40px">
+            {% if comment.children %}
+                {% for sub in comment.children %}
+                    <div class="card bg-info text-black" style="margin-left: 20px">
                         <div class="card-body">
-                            <div>SubSubCommentAuthor: {{ subSubComment.author }}</div>
+                            <div>SubCommentAuthor: {{ sub.author }}</div>
                             <br>
-                            <div>SubSubCommentAuthor: {{ subSubComment.createdAt|date("F jS \\a\\t g:ia") }}</div>
+                            <div>SubCommentAuthor: {{ sub.createdAt|date("F jS \\a\\t g:ia") }}</div>
                             <br>
-                            <div>SubSubCommentContent: <br> {{ subSubComment.content }}</div>
-                            <div class="text-white bg-white"><a href="{{ path('comment_update_form', {'article': article.id, 'comment': subSubComment.id }) }}">Edit</a></div>
-                            <div class="text-white bg-white"><a href="{{ path('comment_delete', {'article': article.id, 'comment': subSubComment.id }) }}">Delete</a></div>
-                            <div class="text-white bg-white"><a href="{{ path('comment_reply', {'article': article.id, 'comment': subSubComment.id }) }}">Reply</a></div>
+                            <div>SubCommentContent: <br> {{ sub.content }}</div>
+                            <div class="text-white bg-white"><a href="{{ path('comment_update_form', {'article': article.id, 'comment': sub.id }) }}">Edit</a></div>
+                            <div class="text-white bg-white"><a href="{{ path('comment_delete', {'article': article.id, 'comment': sub.id }) }}">Delete</a></div>
+                            <div class="text-white bg-white"><a href="{{ path('comment_reply', {'article': article.id, 'comment': sub.id }) }}">Reply</a></div>
                         </div>
                     </div>
+                    {{ subComment.subcomment(sub.children, article, 40) }}
                 {% endfor %}
-            {% endfor %}
+            {% endif %}
         {% endfor %}
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             {{ render(controller('App\\Controller\\CommentController::create', {'article': article.id })) }}
