@@ -3,15 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Articles;
+use App\Entity\Like;
 use App\Entity\Users;
 use App\Form\ArticleType;
 use App\Repository\ArticlesRepository;
+use Doctrine\Migrations\Exception\AlreadyAtVersion;
 use http\Client\Curl\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Security;
 
 class ArticleController extends AbstractController
@@ -148,5 +152,43 @@ class ArticleController extends AbstractController
         $em->remove($article);
         $em->flush();
         return $this->redirectToRoute('articles');
+    }
+
+    /**
+     * @Route("/like/{article}", name="like")
+     */
+    public function like(AuthorizationCheckerInterface $authChecker, Articles $article)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if (false === $authChecker->isGranted("IS_AUTHENTICATED_FULLY")) {
+            throw new AccessDeniedException('Unable to access this page!');
+        }
+
+
+
+
+        $isLiked = $this->getDoctrine()->getRepository(Like::class)->findOneBy([
+            'user_id' => $user,
+            'article_id' => $article
+        ]);
+//        dump($isLiked);
+        if( null === $isLiked) {
+            print('Not liked yet');
+            $like = new Like();
+            $like->setUser($user);
+            $like->setArticle($article);
+            $likeCount = $article->getLikesCount();
+            $article->setLikesCount($likeCount + 1);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($like);
+            $em->persist($article);
+            $em->flush();
+        }
+
+
+        return $this->render('article/single.html.twig', [
+            'article' => $article,
+        ]);
+
     }
 }

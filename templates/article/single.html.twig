@@ -13,6 +13,8 @@
                 <div>Author: {{ article.createdAt|date("F jS \\a\\t g:ia") }}</div>
                 <br>
                 <div>Content: <br> {{ article.content }}</div>
+                <br>
+                <div>Likes: <br> {{ article.likesCount }} <a href="{{ path('like', {'article': article.id}) }}" class="btn-warning">Like</a></div>
             </div>
         </div>
 
