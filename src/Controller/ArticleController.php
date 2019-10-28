@@ -7,6 +7,7 @@ use App\Entity\Like;
 use App\Entity\Users;
 use App\Form\ArticleType;
 use App\Repository\ArticlesRepository;
+use App\Service\ArticleService;
 use Doctrine\Migrations\Exception\AlreadyAtVersion;
 use http\Client\Curl\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -20,14 +21,28 @@ use Symfony\Component\Security\Core\Security;
 
 class ArticleController extends AbstractController
 {
+//    /**
+//     * @Route("/", name="articles")
+//     */
+//    public function index()
+//    {
+//        $em = $this->getDoctrine()->getManager();
+//        $articles = $em->getRepository(Articles::class)->findAll();
+//
+//        return $this->render('article/index.html.twig', [
+//            'controller_name' => 'ArticleController',
+//            'articles' => $articles,
+//        ]);
+//    }
+
     /**
      * @Route("/", name="articles")
+     * @param ArticleService $query
+     * @return Response
      */
-    public function index()
+    public function index(Request $request, ArticleService $query)
     {
-        $em = $this->getDoctrine()->getManager();
-        $articles = $em->getRepository(Articles::class)->findAll();
-
+        $articles = $query->ReturnArticles($request);
         return $this->render('article/index.html.twig', [
             'controller_name' => 'ArticleController',
             'articles' => $articles,
