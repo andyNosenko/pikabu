@@ -11,8 +11,12 @@
         }
     </style>
     <div class="container">
-{#        <h2>List of Articles for {{ user.firstName }}</h2>#}
-        <a href="{{ path('create_article') }}">Create Article</a>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') or is_granted('ROLE_BLOGGER') %}
+            <a href="{{ path('create_article') }}">Create Article</a>
+        {% endif %}
+        {% if user.count == 0 %}
+            <h1>This user doesn't have articles!</h1>
+        {% endif %}
         {% for article in user.items %}
             <div class="card bg-primary text-white">
                 <div class="card-body">
@@ -23,11 +27,9 @@
                     <div>Date: {{ article.createdAt|date("F jS \\a\\t g:ia") }}</div>
                     <br>
                     <div>Content: <br> {{ article.content }}</div>
+                    <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">Watch</a></div>
                     <br>
                     <div>Likes: {{ article.likesCount }}</div>
-                    <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">Watch</a></div>
-                    <div class="text-white bg-white"><a href="{{ path('update_article', {'article': article.id}) }}">Edit</a></div>
-                    <div class="text-white bg-white"><a href="{{ path('article_delete', {'article': article.id }) }}">Delete</a></div>
                 </div>
             </div>
         {% endfor %}

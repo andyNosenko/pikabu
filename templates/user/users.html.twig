@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ArticlesController!{% endblock %}
+
+{% block body %}
+    <style>
+        .sort a {
+            color: blue;
+        }
+    </style>
+    <div class="container">
+        <h2>List of Users</h2>
+        {{ knp_pagination_filter(users, {
+            't.email': 'Email',
+            't.lastName': 'Last Name',
+            't.roles': 'Roles'
+        }) }}
+        <div class="sort">
+            Sort by:
+            {{ knp_pagination_sortable(users, 'Email', 't.email') }}
+            {{ knp_pagination_sortable(users, 'First Name', 't.firstName') }}
+            {{ knp_pagination_sortable(users, 'Last Name', 't.lastName') }}
+            {{ knp_pagination_sortable(users, 'Roles', 't.roles') }}
+        </div>
+        <br>
+        {% for user in users %}
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div>Id: {{ user.id }}</div>
+                    <br>
+                    <div>Email: {{ user.email }}</div>
+                    <br>
+                    {% for role in user.roles %}
+                        <div>Roles: {{ role }}</div>
+                    {% endfor %}
+                    <br>
+                    <div>First Name: {{ user.firstName }}</div>
+                    <br>
+                    <div>Last Name: {{ user.lastName }}</div>
+                    <br>
+                    <div>
+                        {% if user.roles[0] == "ROLE_USER" %}
+                            <a class="btn btn-primary" href="{{ path('make_blogger', {'id': user.id }) }}">Make as blogger</a>
+                        {% else %}
+                            <a class="btn btn-primary" href="{{ path('make_user', {'id': user.id }) }}">Make as user</a>
+                        {% endif %}
+                    </div>
+                    <br>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="text-white bg-white"><a href="{{ path('edit_user', {'id': user.id}) }}">Edit</a></div>
+                        <div class="text-white bg-white"><a href="{{ path('delete_user', {'id': user.id}) }}">Delete</a></div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="navigation">
+            {{ knp_pagination_render(users) }}
+        </div>
+    </div>
+{% endblock %}

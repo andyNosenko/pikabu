@@ -10,7 +10,7 @@
 <body>
 
 <a href="{{ path('articles') }}">All Posts</a>
-<a href="#">Popular</a>
+<a href="{{ path('popular') }}">Popular</a>
 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
     <a href="#">Preferences(Not for guests)</a>
     <a href="{{ path('profile') }}">My profile(Only for authorized)</a>
@@ -24,8 +24,9 @@
     <a href="{{ path('login') }}">Login(Only for guests)</a>
     <a href="{{ path('register') }}">Register(Only for guests)</a>
 {% endif %}
-{% if is_granted('IS_ADMIN') %}
-    <a href="#">Administration(Only for admin)</a>
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
+    <a href="{{ path('administration_users') }}">Administration Users(Only for admin and moder)</a>
+    <a href="{{ path('administration_articles') }}">Administration Articles(Only for admin and moder)</a>
 {% endif %}
 
 {% block body %}{% endblock %}

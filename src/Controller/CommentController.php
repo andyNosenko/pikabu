@@ -16,6 +16,7 @@ class CommentController extends AbstractController
      */
     public function create(Request $request, Articles $article)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $comment = new Comments();
         $form = $this->createForm(CommentType::class, $comment, [
             'action' => $this->generateUrl('comment_create_form', [
@@ -26,6 +27,7 @@ class CommentController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $comment = $form->getData();
+            $comment->setAuthor($user->getEmail());
             $comment->setCreatedAt(new \DateTime('now'));
             $comment->setArticle($article);
             $em = $this->getDoctrine()->getManager();
@@ -79,6 +81,7 @@ class CommentController extends AbstractController
      */
     public function reply(Request $request, Articles $article, Comments $comment)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $subComment = new Comments();
         $form = $this->createForm(CommentType::class, $subComment, [
             'action' => $this->generateUrl('comment_reply', [
@@ -90,6 +93,7 @@ class CommentController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $subComment = $form->getData();
+            $subComment->setAuthor($user->getEmail());
             $subComment->setCreatedAt(new \DateTime('now'));
            // $subComment->setArticle($article);
             $subComment->setParent($comment);

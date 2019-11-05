@@ -13,9 +13,17 @@
     </style>
     <div class="container">
         <h2>List of Articles</h2>
-        {%if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') or is_granted('ROLE_BLOGGER') %}
-            <a href="{{ path('create_article') }}">Create Article</a>
-        {% endif %}
+        {{ knp_pagination_filter(articles, {
+            't.title': 'Title',
+            't.author': 'Author'
+        }) }}
+        <div class="sort">
+            Sort by:
+            {{ knp_pagination_sortable(articles, 'Date', 't.created_at') }}
+            {{ knp_pagination_sortable(articles, 'Author', 't.author') }}
+            {{ knp_pagination_sortable(articles, 'Title', 't.title') }}
+        </div>
+        <br>
         {% for article in articles %}
             <div class="card bg-primary text-white">
                 <div class="card-body">
@@ -25,10 +33,14 @@
                     <br>
                     <div>Date: {{ article.created_at|date("F jS \\a\\t g:ia") }}</div>
                     <br>
-                    <div>Content: <br> {{ article.content|slice(0,3) }}...</div>
+                    <div>Content: <br> {{ article.content }}</div>
                     <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">Watch</a></div>
                     <br>
                     <div>Likes: {{ article.likes_count }}</div>
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
+                        <div class="text-white bg-white"><a href="{{ path('update_article', {'article': article.id}) }}">Edit</a></div>
+                        <div class="text-white bg-white"><a href="{{ path('article_delete', {'article': article.id }) }}">Delete</a></div>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

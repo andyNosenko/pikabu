@@ -60,12 +60,12 @@ class Users implements UserInterface
     private $isBlogger;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Articles", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Articles", mappedBy="user", cascade={"remove"})
      */
     private $articles;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Like", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Like", mappedBy="user", cascade={"remove"})
      */
     private $likes;
 

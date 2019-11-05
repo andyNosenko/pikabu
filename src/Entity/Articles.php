@@ -45,18 +45,19 @@ class Articles
     private $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comments", mappedBy="article", cascade="remove")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comments", mappedBy="article", cascade={"remove"})
      * @OrderBy({"id" = "DESC"})
      */
     private $comments;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Users", inversedBy="articles")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Like", mappedBy="article", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Like", mappedBy="article", orphanRemoval=true, cascade={"remove"})
      */
     private $likes;
 

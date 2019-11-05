@@ -49,7 +49,7 @@ class Comments
 
     /**
      * One Comment has Many Comments.
-     * @OneToMany(targetEntity="Comments", mappedBy="parent")
+     * @OneToMany(targetEntity="Comments", mappedBy="parent", cascade={"remove"})
      */
     private $children;
 

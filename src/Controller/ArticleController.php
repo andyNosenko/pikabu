@@ -9,9 +9,13 @@ use App\Form\ArticleType;
 use App\Repository\ArticlesRepository;
 use App\Service\ArticleService;
 use Doctrine\Migrations\Exception\AlreadyAtVersion;
+use Doctrine\ORM\EntityManagerInterface;
 use http\Client\Curl\User;
+use Knp\Component\Pager\PaginatorInterface;
+use phpDocumentor\Reflection\Types\This;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -69,20 +73,62 @@ class ArticleController extends AbstractController
 //    }
 
     /**
-     * @Route("/my_articles", name="my_articles")
+     * @Route("/my_articles/{page?1}", name="my_articles")
      * @param Security $security
      * @param Users $user
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function privatePage() : Response
+    public function privatePage(int $page, ContainerInterface $container): Response
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(Users::class)->findOneBy([
+            'id' => $user,
+        ]);
+
+        $paginator = $container->get('knp_paginator');
+
+        $userArticles = $paginator->paginate(
+            $user->getArticles(),
+            $page,
+            1
+        );
 
         return $this->render('article/myArticles.html.twig', [
-            'user' => $user,
+            'user' => $userArticles,
         ]);
         // ... do whatever you want with $user
+    }
+
+    /**
+     * @Route("/blogger_articles/{email}/{page?1}", name="blogger_articles")
+     * @param int $page
+     * @param Users $user
+     * @param ContainerInterface $container
+     * @return Response
+     */
+    public function bloggerArticles(int $page, Users $user, ContainerInterface $container): Response
+    {
+
+        //$user->getArticles();
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(Users::class)->findOneBy([
+            'id' => $user,
+        ]);
+
+        $paginator = $container->get('knp_paginator');
+
+        $userArticles = $paginator->paginate(
+            $user->getArticles(),
+            $page,
+            1
+        );
+
+        return $this->render('article/bloggerArticles.html.twig', [
+            'user' => $userArticles,
+        ]);
     }
 
     /**
@@ -101,7 +147,6 @@ class ArticleController extends AbstractController
 //
 //        }
 
-
         return $this->render('article/single.html.twig', [
             'article' => $article,
         ]);
@@ -113,11 +158,15 @@ class ArticleController extends AbstractController
     public function create(Request $request)
     {
         $article = new Articles();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $article = $form->getData();
             $article->setCreatedAt(new \DateTime('now'));
+            $article->setAuthor($user->getEmail());
+            $article->setUser($user);
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
@@ -180,15 +229,12 @@ class ArticleController extends AbstractController
         }
 
 
-
-
         $isLiked = $this->getDoctrine()->getRepository(Like::class)->findOneBy([
             'user_id' => $user,
             'article_id' => $article
         ]);
-//        dump($isLiked);
-        if( null === $isLiked) {
-            print('Not liked yet');
+
+        if (null === $isLiked) {
             $like = new Like();
             $like->setUser($user);
             $like->setArticle($article);
@@ -204,5 +250,35 @@ class ArticleController extends AbstractController
             'article' => $article,
         ]);
 
+    }
+
+    /**
+     * @Route("/administration/articles", name="administration_articles")
+     * @param Request $request
+     * @param ArticleService $query
+     * @return Response
+     */
+    public function administrationArticles(Request $request, ArticleService $query)
+    {
+        $articles = $query->ReturnArticles($request);
+
+        return $this->render('article/articles.html.twig', [
+            'articles' => $articles,
+        ]);
+    }
+
+    /**
+     * @Route("/popular", name="popular")
+     * @param Request $request
+     * @param ArticleService $query
+     * @return Response
+     */
+    public function popularArticles(Request $request, ArticleService $query)
+    {
+        $articles = $query->ReturnPopularArticles($request);
+
+        return $this->render('article/index.html.twig', [
+            'articles' => $articles,
+        ]);
     }
 }

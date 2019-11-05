@@ -2,11 +2,12 @@
 
 
 namespace App\Service;
+
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
-class ArticleService
+class UserService
 {
     protected $em;
     protected $container;
@@ -18,23 +19,23 @@ class ArticleService
         $this->container = $container;
     }
 
-    public function ReturnArticles($request)
+    public function ReturnUsersAndBloggers($request)
     {
         $em = $this->em;
         $container = $this->container;
         $query = $em->createQuery(
-            '
+            "
                 SELECT
                         t.id,
-                        t.author,
-                        t.title,
-                        t.content,
-                        t.created_at,
-                        t.updated_at,
-                        t.likes_count
+                        t.email,
+                        t.roles,
+                        t.firstName,
+                        t.lastName
                 FROM
-                    App\Entity\Articles t ORDER BY t.created_at DESC
-            '
+                    App\Entity\Users t
+                 WHERE
+                    t.roles LIKE '[%U%]' OR t.roles LIKE '[%B%]'
+            "
         );
         //$result = $query->execute();
         $paginator = $container->get('knp_paginator');
@@ -46,24 +47,21 @@ class ArticleService
         return ($result);
     }
 
-    public function ReturnPopularArticles($request)
+    public function ReturnAllUsers($request)
     {
         $em = $this->em;
         $container = $this->container;
         $query = $em->createQuery(
-            '
+            "
                 SELECT
                         t.id,
-                        t.author,
-                        t.title,
-                        t.content,
-                        t.created_at,
-                        t.updated_at,
-                        t.likes_count
+                        t.email,
+                        t.roles,
+                        t.firstName,
+                        t.lastName
                 FROM
-                    App\Entity\Articles t
-                ORDER BY t.created_at, t.likes_count DESC 
-            '
+                    App\Entity\Users t
+            "
         );
         //$result = $query->execute();
         $paginator = $container->get('knp_paginator');
@@ -74,5 +72,4 @@ class ArticleService
         );
         return ($result);
     }
-
 }
