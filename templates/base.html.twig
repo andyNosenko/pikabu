@@ -9,25 +9,27 @@
 </head>
 <body>
 
-<a href="{{ path('articles') }}">All Posts</a>
-<a href="{{ path('popular') }}">Popular</a>
+<a href="{{ path('articles') }}">{% trans %}All Posts{% endtrans %}</a>
+<a href="{{ path('popular') }}">{% trans %}Popular{% endtrans %}</a>
 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <a href="#">Preferences(Not for guests)</a>
-    <a href="{{ path('profile') }}">My profile(Only for authorized)</a>
-    <a href="{{ path('logout') }}">Logout(Only for authorized)</a>
+    <a href="#">{% trans %}Preferences{% endtrans %}</a>
+    <a href="{{ path('profile') }}">{% trans %}My profile{% endtrans %}</a>
+    <a href="{{ path('logout') }}">{% trans %}Logout{% endtrans %}</a>
 {% endif %}
 {% if is_granted('ROLE_BLOGGER') or is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
-    <a href="{{ path('my_articles') }}">My Posts(Only for bloggers)</a>
-    <a href="{{ path('create_article') }}">Create New Post(Only for bloggers)</a>
+    <a href="{{ path('my_articles') }}">{% trans %}My Posts{% endtrans %}</a>
+    <a href="{{ path('create_article') }}">{% trans %}Create New Post{% endtrans %}</a>
 {% endif %}
 {% if not is_granted('IS_AUTHENTICATED_FULLY')%}
-    <a href="{{ path('login') }}">Login(Only for guests)</a>
-    <a href="{{ path('register') }}">Register(Only for guests)</a>
+    <a href="{{ path('login') }}">{% trans %}Login{% endtrans %}</a>
+    <a href="{{ path('register') }}">{% trans %}Register{% endtrans %}</a>
 {% endif %}
 {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') %}
-    <a href="{{ path('administration_users') }}">Administration Users(Only for admin and moder)</a>
-    <a href="{{ path('administration_articles') }}">Administration Articles(Only for admin and moder)</a>
+    <a href="{{ path('administration_users') }}">{% trans %}Administration Users{% endtrans %}</a>
+    <a href="{{ path('administration_articles') }}">{% trans %}Administration Articles{% endtrans %}</a>
 {% endif %}
+<a href="{{ path('lang', {'lang': 'en'}) }}">English</a>
+<a href="{{ path('lang', {'lang': 'ru'}) }}">Русский</a>
 
 {% block body %}{% endblock %}
 {% block javascripts %}{% endblock %}

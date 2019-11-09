@@ -66,6 +66,11 @@ class Articles
      */
     private $likes_count;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
+
 
 
     /**
@@ -224,6 +229,18 @@ class Articles
     public function setLikesCount(?int $likes_count): self
     {
         $this->likes_count = $likes_count;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }

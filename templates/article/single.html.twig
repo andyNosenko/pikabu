@@ -16,7 +16,14 @@
             <div class="card-body">
                 <div>Title: {{ article.title }}</div>
                 <br>
-                <div class="author">Author: <a href="{{ path('blogger_articles', {'email': article.author }) }}">{{ article.author }}</a></div>
+                <div class="author">
+                    Author: <a href="{{ path('blogger_articles', {'email': article.author }) }}">{{ article.author }}</a>
+                    <img src="{{ asset('uploads/images/') ~article.user.image }}" alt="" width="50px" height="50px">
+                    <br>
+                    About me: {{ article.user.info }}
+                </div>
+                <br>
+                <div><img src="{{ asset('uploads/images/') ~article.image }}" alt="" width="400px" height="400px"></div>
                 <br>
                 <div>Date: {{ article.createdAt|date("F jS \\a\\t g:ia") }}</div>
                 <br>
@@ -31,7 +38,7 @@
         </div>
 
         <h2>Comments</h2>
-        {% for comment in article.comments %}
+        {% for comment in comments %}
             <div class="card bg-warning text-black">
                 <div class="card-body">
                     <div class="author">Author: <a href="{{ path('blogger_articles', {'email': comment.author }) }}">{{ comment.author }}</a></div>
@@ -70,6 +77,9 @@
                 {% endfor %}
             {% endif %}
         {% endfor %}
+        <div class="navigation">
+            {{ knp_pagination_render(comments) }}
+        </div>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             {{ render(controller('App\\Controller\\CommentController::create', {'article': article.id })) }}
         {% endif %}

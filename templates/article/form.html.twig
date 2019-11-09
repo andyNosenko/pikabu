@@ -16,6 +16,10 @@
 {#                {{ form_widget(form.author) }}#}
 {#            </div>#}
             <div class="form-group">
+                <label for="textarea">{{ form_label(form.image) }}</label><br>
+                {{ form_widget(form.image) }}
+            </div>
+            <div class="form-group">
                 <label for="textarea">{{ form_label(form.content) }}</label><br>
                 {{ form_widget(form.content) }}
             </div>

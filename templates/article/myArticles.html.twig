@@ -13,6 +13,9 @@
     <div class="container">
 {#        <h2>List of Articles for {{ user.firstName }}</h2>#}
         <a href="{{ path('create_article') }}">Create Article</a>
+        {% if user.count == 0 %}
+            <h1>You don't have articles!</h1>
+        {% endif %}
         {% for article in user.items %}
             <div class="card bg-primary text-white">
                 <div class="card-body">

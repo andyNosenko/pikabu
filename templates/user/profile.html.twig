@@ -2,19 +2,31 @@
 
 {% block title %}Hello UserController!{% endblock %}
 {% block body %}
+    <style>
+        .author a{
+            color:white;
+        }
+        .sort a {
+            color: blue;
+        }
+    </style>
     <div class="container">
-        <h2>Hi, {{ user.firstName }}</h2>
+        <h2>{% trans %}Hi{% endtrans %}, {{ user.firstName }}</h2>
             <div class="card bg-primary text-white">
                 <div class="card-body">
                     <div>Id: {{ user.id }}</div>
                     <br>
-                    <div>Login: {{ user.email }}</div>
+                    <div class="author">{% trans %}Email{% endtrans %}: <a href="{{ path('blogger_articles', {'email': user.email }) }}">{{ user.email }}</a></div>
                     <br>
-                    <div>First Name: {{ user.firstName }}</div>
+                    <div><img src="{{ asset('uploads/images/') ~user.image }}" alt="" width="100px" height="100px"></div>
                     <br>
-                    <div>Last Name: {{ user.lastName }}</div>
+                    <div>{% trans %}First Name{% endtrans %}: {{ user.firstName }}</div>
                     <br>
-                   <div class="text-white bg-white"><a href="{{ path('update_profile') }}">Edit</a></div>
+                    <div>{% trans %}Last Name{% endtrans %}: {{ user.lastName }}</div>
+                    <br>
+                    <div>{% trans %}About me{% endtrans %}: {{ user.info }}</div>
+                    <br>
+                   <div class="text-white bg-white"><a href="{{ path('update_profile') }}">{% trans %}Edit{% endtrans %}</a></div>
                 </div>
             </div>
     </div>

@@ -19,6 +19,24 @@ class ArticlesRepository extends ServiceEntityRepository
         parent::__construct($registry, Articles::class);
     }
 
+    public function findAllArticles()
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.created_at', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPopularArticles()
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.likes_count',  'DESC')
+            ->addOrderBy('a.created_at', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findArticleWithComments($articleId): ?Articles
     {
         return $this->createQueryBuilder('a')

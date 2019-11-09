@@ -6,14 +6,8 @@ use App\Entity\Articles;
 use App\Entity\Like;
 use App\Entity\Users;
 use App\Form\ArticleType;
-use App\Repository\ArticlesRepository;
 use App\Service\ArticleService;
-use Doctrine\Migrations\Exception\AlreadyAtVersion;
-use Doctrine\ORM\EntityManagerInterface;
-use http\Client\Curl\User;
-use Knp\Component\Pager\PaginatorInterface;
-use phpDocumentor\Reflection\Types\This;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,22 +19,9 @@ use Symfony\Component\Security\Core\Security;
 
 class ArticleController extends AbstractController
 {
-//    /**
-//     * @Route("/", name="articles")
-//     */
-//    public function index()
-//    {
-//        $em = $this->getDoctrine()->getManager();
-//        $articles = $em->getRepository(Articles::class)->findAll();
-//
-//        return $this->render('article/index.html.twig', [
-//            'controller_name' => 'ArticleController',
-//            'articles' => $articles,
-//        ]);
-//    }
-
     /**
      * @Route("/", name="articles")
+     * @param Request $request
      * @param ArticleService $query
      * @return Response
      */
@@ -53,24 +34,6 @@ class ArticleController extends AbstractController
         ]);
     }
 
-
-//    /**
-//     * @Route("/articles/my/{user}", name="my_articles")
-//     * @param Security $security
-//     * @param Users $user
-//     * @return \Symfony\Component\HttpFoundation\Response
-//     */
-//    public function privatePage( Security $security,  Users $user) : Response
-//    {
-//       //$user = $security->getUser();
-//        $em = $this->getDoctrine()->getManager();
-//
-//
-//        return $this->render('article/myArticles.html.twig', [
-//            'user' => $user,
-//        ]);
-//        // ... do whatever you want with $user
-//    }
 
     /**
      * @Route("/my_articles/{page?1}", name="my_articles")
@@ -132,11 +95,13 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/article/single/{article}", name="single_article")
+     * @Route("/article/single/{article}/{page?1}", name="single_article")
+     * @param int $page
      * @param Articles $article
+     * @param ContainerInterface $container
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function single(Articles $article)
+    public function single(int $page, Articles $article, ContainerInterface $container)
     {
 //        $article = $this->getDoctrine()->getRepository(Articles::class)->findArticleWithComments($article->getId());
 //        dump($article); exit;
@@ -147,15 +112,25 @@ class ArticleController extends AbstractController
 //
 //        }
 
+        $paginator = $container->get('knp_paginator');
+
+        $comments = $paginator->paginate(
+            $article->getComments(),
+            $page,
+            1
+        );
+
+
         return $this->render('article/single.html.twig', [
             'article' => $article,
+            'comments' => $comments
         ]);
     }
 
     /**
      * @Route("/article/create", name="create_article")
      */
-    public function create(Request $request)
+    public function create(Request $request, FileUploader $fileUploader)
     {
         $article = new Articles();
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -164,6 +139,11 @@ class ArticleController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $article = $form->getData();
+            $image = $form['image']->getData();
+            if ($image) {
+                $imageFileName = $fileUploader->upload($image);
+                $article->setImage($imageFileName);
+            }
             $article->setCreatedAt(new \DateTime('now'));
             $article->setAuthor($user->getEmail());
             $article->setUser($user);
@@ -181,11 +161,11 @@ class ArticleController extends AbstractController
      * @Route("/article/update/{article}", name="update_article")
      * @param Request $request
      * @param Articles $article
-     * @param Users $user
+     * @param FileUploader $fileUploader
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      * @throws \Exception
      */
-    public function update(Request $request, Articles $article)
+    public function update(Request $request, Articles $article, FileUploader $fileUploader)
     {
         $form = $this->createForm(ArticleType::class, $article, [
             'action' => $this->generateUrl('update_article', [
@@ -196,6 +176,11 @@ class ArticleController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $articles = $form->getData();
+            $image = $form['image']->getData();
+            if ($image) {
+                $imageFileName = $fileUploader->upload($image);
+                $articles->setImage($imageFileName);
+            }
             $articles->setUpdatedAt(new \DateTime('now'));
             $em = $this->getDoctrine()->getManager();
             $em->flush();
@@ -219,9 +204,13 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/like/{article}", name="like")
+     * @Route("/like/{article}/{page}", name="like")
+     * @param AuthorizationCheckerInterface $authChecker
+     * @param Articles $article
+     * @param ContainerInterface $container
+     * @return Response
      */
-    public function like(AuthorizationCheckerInterface $authChecker, Articles $article)
+    public function like(int $page = 1, AuthorizationCheckerInterface $authChecker, Articles $article, ContainerInterface $container)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         if (false === $authChecker->isGranted("IS_AUTHENTICATED_FULLY")) {
@@ -246,8 +235,17 @@ class ArticleController extends AbstractController
             $em->flush();
         }
 
+        $paginator = $container->get('knp_paginator');
+
+        $comments = $paginator->paginate(
+            $article->getComments(),
+            $page,
+            1
+        );
+
         return $this->render('article/single.html.twig', [
             'article' => $article,
+            'comments' => $comments
         ]);
 
     }
@@ -281,4 +279,31 @@ class ArticleController extends AbstractController
             'articles' => $articles,
         ]);
     }
+
+
+    /**
+     * @Route("/lang/{lang}", name="lang")
+     * @param string $lang
+     * @param AuthorizationCheckerInterface $authChecker
+     * @return Response
+     */
+    public function lang(string $lang, AuthorizationCheckerInterface $authChecker)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        if (false === $authChecker->isGranted("IS_AUTHENTICATED_FULLY")) {
+            throw new AccessDeniedException('Unable to access this page!');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(Users::class)->findOneBy([
+            'id' => $user,
+        ]);
+        $user->setLocale($lang);
+        $em->persist($user);
+        $em->flush();
+
+       return new Response('<h1>Your language is: '.$lang.'</h1>');
+    }
 }
+

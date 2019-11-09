@@ -7,7 +7,7 @@
     <div class="col-6 offset-3">
         <div class="card bg-light">
             <div class="card-body">
-                <h1 class="text-center">Register</h1>
+                <h1 class="text-center">{% trans %}Update my information{% endtrans %}</h1>
                 {{ form_start(form) }}
                 {{ form_row(form.email) }}
                 {{ form_row(form.password) }}
@@ -15,7 +15,7 @@
                 {{ form_row(form.lastName) }}
                 {{ form_row(form.image) }}
                 {{ form_row(form.info) }}
-                <button class="btn btn-primary btn-block">Register</button>
+                <button class="btn btn-primary btn-block">{% trans %}Save{% endtrans %}</button>
                 {{ form_end(form) }}
             </div>
         </div>

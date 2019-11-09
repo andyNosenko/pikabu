@@ -53,11 +53,6 @@ class Users implements UserInterface
      */
     private $lastName;
 
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $isBlogger;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Articles", mappedBy="user", cascade={"remove"})
@@ -68,6 +63,21 @@ class Users implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Like", mappedBy="user", cascade={"remove"})
      */
     private $likes;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $info;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $locale;
 
 
 
@@ -258,6 +268,42 @@ class Users implements UserInterface
                 $like->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getInfo(): ?string
+    {
+        return $this->info;
+    }
+
+    public function setInfo(?string $info): self
+    {
+        $this->info = $info;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
 
         return $this;
     }

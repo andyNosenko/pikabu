@@ -18,15 +18,20 @@
             <h1>This user doesn't have articles!</h1>
         {% endif %}
         {% for article in user.items %}
+            <h2>All articles of {{ article.user.email }}</h2>
+            <img src="{{ asset('uploads/images/') ~article.user.image }}" alt="" width="50px" height="50px">
+            <h3>About author: {{ article.user.info }}</h3>
             <div class="card bg-primary text-white">
                 <div class="card-body">
                     <div>Title: {{ article.title }}</div>
                     <br>
                     <div class="author">Author: <a href="{{ path('blogger_articles', {'email': article.user.email }) }}">{{ article.user.email }}</a></div>
                     <br>
+                    <div><img src="{{ asset('uploads/images/') ~article.image }}" alt="" width="200px" height="200px"></div>
+                    <br>
                     <div>Date: {{ article.createdAt|date("F jS \\a\\t g:ia") }}</div>
                     <br>
-                    <div>Content: <br> {{ article.content }}</div>
+                    <div>Content: <br> {{ article.content|slice(0,3) }}</div>
                     <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">Watch</a></div>
                     <br>
                     <div>Likes: {{ article.likesCount }}</div>

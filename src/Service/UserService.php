@@ -30,7 +30,8 @@ class UserService
                         t.email,
                         t.roles,
                         t.firstName,
-                        t.lastName
+                        t.lastName,
+                        t.image
                 FROM
                     App\Entity\Users t
                  WHERE
@@ -58,7 +59,8 @@ class UserService
                         t.email,
                         t.roles,
                         t.firstName,
-                        t.lastName
+                        t.lastName,
+                        t.image
                 FROM
                     App\Entity\Users t
             "

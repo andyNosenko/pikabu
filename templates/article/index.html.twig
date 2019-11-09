@@ -12,23 +12,25 @@
         }
     </style>
     <div class="container">
-        <h2>List of Articles</h2>
+        <h2>{% trans %}List of Articles{% endtrans %}</h2>
         {%if is_granted('ROLE_ADMIN') or is_granted('ROLE_MODERATOR') or is_granted('ROLE_BLOGGER') %}
-            <a href="{{ path('create_article') }}">Create Article</a>
+            <a href="{{ path('create_article') }}">{% trans %}Create Article{% endtrans %}</a>
         {% endif %}
         {% for article in articles %}
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <div>Title: {{ article.title }}</div>
+                    <div>{% trans %}Title{% endtrans %}: {{ article.title }}</div>
                     <br>
-                    <div class="author">Author: <a href="{{ path('blogger_articles', {'email': article.author }) }}">{{ article.author }}</a></div>
+                    <div class="author">{% trans %}Author{% endtrans %}: <a href="{{ path('blogger_articles', {'email': article.author }) }}">{{ article.author }}</a></div>
                     <br>
-                    <div>Date: {{ article.created_at|date("F jS \\a\\t g:ia") }}</div>
+                    <div><img src="{{ asset('uploads/images/') ~article.image }}" alt="" width="200px" height="200px"></div>
                     <br>
-                    <div>Content: <br> {{ article.content|slice(0,3) }}...</div>
-                    <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">Watch</a></div>
+                    <div>{% trans %}Date{% endtrans %}: {{ article.created_at|date("F jS \\a\\t g:ia") }}</div>
                     <br>
-                    <div>Likes: {{ article.likes_count }}</div>
+                    <div>{% trans %}Content{% endtrans %}: <br> {{ article.content|slice(0,3) }}...</div>
+                    <div class="text-white bg-white"><a href="{{ path('single_article', {'article': article.id }) }}">{% trans %}Watch{% endtrans %}</a></div>
+                    <br>
+                    <div>{% trans %}Likes{% endtrans %}: {{ article.likes_count }}</div>
                 </div>
             </div>
         {% endfor %}
