@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace App\Controller;
 
@@ -74,8 +75,6 @@ class ArticleController extends AbstractController
     public function bloggerArticles(int $page, Users $user, ContainerInterface $container): Response
     {
 
-        //$user->getArticles();
-
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(Users::class)->findOneBy([
             'id' => $user,
@@ -103,15 +102,6 @@ class ArticleController extends AbstractController
      */
     public function single(int $page, Articles $article, ContainerInterface $container)
     {
-//        $article = $this->getDoctrine()->getRepository(Articles::class)->findArticleWithComments($article->getId());
-//        dump($article); exit;
-//        dump($article); exit;
-//        $comments = $article->getComments();
-//
-//        if($comments) {
-//
-//        }
-
         $paginator = $container->get('knp_paginator');
 
         $comments = $paginator->paginate(

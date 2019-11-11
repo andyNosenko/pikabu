@@ -1,6 +1,6 @@
 <?php
 
-
+declare(strict_types = 1);
 namespace App\Service;
 
 
@@ -38,7 +38,6 @@ class UserService
                     t.roles LIKE '[%U%]' OR t.roles LIKE '[%B%]'
             "
         );
-        //$result = $query->execute();
         $paginator = $container->get('knp_paginator');
         $result = $paginator->paginate(
             $query,
@@ -65,7 +64,6 @@ class UserService
                     App\Entity\Users t
             "
         );
-        //$result = $query->execute();
         $paginator = $container->get('knp_paginator');
         $result = $paginator->paginate(
             $query,

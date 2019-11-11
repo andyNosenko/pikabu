@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpUndefinedVariableInspection */
+declare(strict_types = 1);
 
 namespace App\Controller;
 
@@ -8,7 +9,6 @@ use App\Form\UpdateUserAdminAccessType;
 use App\Service\FileUploader;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,23 +66,6 @@ class UserController extends AbstractController
         ]);
     }
 
-//    /**
-//     * @param Users $user
-//     * @return Response
-//     * @Route("/profile/{user}", name="profile")
-//     */
-//    public function profile(AuthorizationCheckerInterface $authChecker, Users $user): Response
-//    {
-//        $a = $this->get('security.token_storage')->getToken()->getUser();
-//        dump($a->getId()); exit;
-//
-//        if (false === $authChecker->isGranted("IS_AUTHENTICATED_FULLY")) {
-//            throw new AccessDeniedException('Unable to access this page!');
-//        }
-//        return $this->render('user/profile.html.twig', [
-//            'user' => $user,
-//        ]);
-//    }
 
     /**
      * @param Users $user
@@ -165,9 +148,6 @@ class UserController extends AbstractController
             $users->setPassword($passwordEncoder->encodePassword($user, $user->getPassword()));
             $em = $this->getDoctrine()->getManager();
             $em->flush();
-//            return $this->render('user/profile.html.twig', [
-//                'user' => $users,
-//            ]);
             return  $this->redirectToRoute('administration_users');
         }
         return $this->render('user/update_admin/update.html.twig', [
@@ -236,6 +216,8 @@ class UserController extends AbstractController
 
     /**
      * @Route("/make_user/{id}", name="make_user")
+     * @param Request $request
+     * @param UserService $query
      * @param Users $user
      * @return Response
      */

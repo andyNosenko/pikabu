@@ -11,7 +11,6 @@
         }
     </style>
     <div class="container">
-{#        <h2>List of Articles for {{ user.firstName }}</h2>#}
         <a href="{{ path('create_article') }}">Create Article</a>
         {% if user.count == 0 %}
             <h1>You don't have articles!</h1>

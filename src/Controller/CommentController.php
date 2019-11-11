@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace App\Controller;
 
@@ -95,7 +96,6 @@ class CommentController extends AbstractController
             $subComment = $form->getData();
             $subComment->setAuthor($user->getEmail());
             $subComment->setCreatedAt(new \DateTime('now'));
-           // $subComment->setArticle($article);
             $subComment->setParent($comment);
             $em = $this->getDoctrine()->getManager();
             $em->persist($subComment);
